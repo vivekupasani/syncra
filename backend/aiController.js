@@ -40,3 +40,15 @@ exports.reviewCode = async (req, res) => {
     });
   }
 };
+
+exports.getTokens = (req, res) => {
+  const { tokensCount } = req.body;
+  const tokensToAdd = parseInt(tokensCount);
+  tokens = tokens + tokensToAdd;
+
+  res.json({
+    status: "success",
+    message: `Tokens added successfully. Current tokens: ${tokens}`,
+    tokensRemaining: tokens,
+  });
+};
