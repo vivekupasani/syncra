@@ -98,6 +98,8 @@ class _AssistantPageState extends State<AssistantPage>
       _waveController.repeat();
 
       await _speechToText.listen(onResult: _onSpeechResult);
+
+      print("Listening started");
       setState(() {});
     }
   }
@@ -111,7 +113,7 @@ class _AssistantPageState extends State<AssistantPage>
     if (_userInput.isNotEmpty) {
       _processInput();
     }
-
+    print("Listening stopped");
     setState(() {});
   }
 

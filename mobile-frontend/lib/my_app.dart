@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'SF Pro Display',
       ),
-      home: auth.currentUser != null ? HomePage() : AssistantPage(),
+      home: auth.currentUser != null ? HomePage() : OnboardPage(),
       debugShowCheckedModeBanner: false,
     );
   }

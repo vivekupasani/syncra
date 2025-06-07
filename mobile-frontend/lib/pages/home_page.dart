@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 import 'package:syncra/pages/assistant_page.dart';
+import 'package:syncra/pages/on_board_page.dart';
 
 // Modern Home Page Design
 class HomePage extends StatefulWidget {
@@ -49,6 +50,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  void onSignOut() async {
+    try {
+      await auth.signOut();
+      Navigator.pushAndRemoveUntil(
+        context,
+        CupertinoPageRoute(builder: (context) => OnboardPage()),
+        (route) => false,
+      );
+    } catch (e) {
+      print("Error signing out: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,21 +76,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: Color(0xFF1E293B).withOpacity(0.8),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.1),
-                        width: 1,
+                  GestureDetector(
+                    onTap: onSignOut,
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF1E293B).withOpacity(0.8),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                          width: 1,
+                        ),
                       ),
-                    ),
-                    child: Icon(
-                      Icons.person_outline,
-                      color: Colors.white70,
-                      size: 20,
+                      child: Icon(
+                        Icons.person_outline,
+                        color: Colors.white70,
+                        size: 20,
+                      ),
                     ),
                   ),
                   Container(
