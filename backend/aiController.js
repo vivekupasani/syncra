@@ -1,7 +1,22 @@
-const { GoogleGenAI } = require("@google/genai");
+const { GoogleGenAI, Modality } = require("@google/genai");
+const axios = require("axios");
+const FormData = require("form-data");
+
 let tokens = 10;
 
-exports.reviewCode = async (req, res) => {
+exports.getTokens = (req, res) => {
+  const { tokensCount } = req.body;
+  const tokensToAdd = parseInt(tokensCount);
+  tokens = tokens + tokensToAdd;
+
+  res.json({
+    status: "success",
+    message: `Tokens added successfully. Current tokens: ${tokens}`,
+    tokensRemaining: tokens,
+  });
+};
+
+exports.textInput = async (req, res) => {
   const { userInput } = req.body;
 
   if (!userInput) {
@@ -15,40 +30,87 @@ exports.reviewCode = async (req, res) => {
   }
 
   try {
-    // // Initialize GoogleGenAI
     const ai = new GoogleGenAI({
       apiKey: "AIzaSyCY55Lx8w5nTjYWXjNcu212IrheeLp-P0c",
     });
 
     const response = await ai.models.generateContent({
       model: "gemini-1.5-flash",
-      contents: `${userInput} `,
+      contents: `${userInput}`,
     });
 
     tokens -= 1;
 
     return res.status(200).json({
       status: "success",
-      message: response.text,
+      content: response.text,
       tokensRemaining: tokens,
+      contentType: "text",
     });
   } catch (error) {
     console.error("Error generating content:", error);
     return res.status(500).json({
       status: "error",
-      message: "Failed to generate content",
+      content: "Failed to generate content",
     });
   }
 };
 
-exports.getTokens = (req, res) => {
-  const { tokensCount } = req.body;
-  const tokensToAdd = parseInt(tokensCount);
-  tokens = tokens + tokensToAdd;
+exports.imageInput = async (req, res) => {
+  const { userInput } = req.body;
 
-  res.json({
-    status: "success",
-    message: `Tokens added successfully. Current tokens: ${tokens}`,
-    tokensRemaining: tokens,
-  });
+  if (!userInput) {
+    return res.status(400).json({ error: "Contents field is required" });
+  }
+
+  if (tokens <= 0) {
+    return res
+      .status(400)
+      .json({ error: "Token is insufficient. Please buy tokens! 😥" });
+  }
+
+  try {
+    const ai = new GoogleGenAI({
+      apiKey: "AIzaSyCY55Lx8w5nTjYWXjNcu212IrheeLp-P0c",
+    });
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash-preview-image-generation",
+      contents: userInput,
+      config: {
+        responseModalities: [Modality.TEXT, Modality.IMAGE],
+      },
+    });
+
+    let imageBase64 = null;
+
+    for (const part of response.candidates[0].content.parts) {
+      if (part.inlineData) {
+        imageBase64 = part.inlineData.data;
+        break;
+      }
+    }
+
+    if (!imageBase64) {
+      return res.status(500).json({
+        status: "error",
+        message: "Image data not found in Gemini response",
+      });
+    }
+
+    tokens -= 1;
+
+    return res.status(200).json({
+      status: "success",
+      content: imageBase64, 
+      tokensRemaining: tokens,
+      contentType: "image",
+    });
+  } catch (error) {
+    console.error("Error generating image:", error);
+    return res.status(500).json({
+      status: "error",
+      content: "Failed to generate image with Gemini",
+    });
+  }
 };

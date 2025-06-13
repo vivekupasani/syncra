@@ -4,7 +4,9 @@ const port = 8080;
 const aiRoute = require("./aiRoute");
 const cors = require("cors");
 app.get("/", (req, res) => {
-  res.send("Hello, World!");
+  res.send(
+    'Hello, World! Redirect to <a href="https://syncra.onrender.com/">syncra.onrender.com</a>'
+  );
 });
 
 app.use(express.json());
