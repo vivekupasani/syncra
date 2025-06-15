@@ -6,6 +6,7 @@ import 'package:syncra/pages/home_page.dart';
 import 'dart:math' as math;
 
 import 'package:syncra/utils/scafold_message.dart';
+import 'package:syncra/utils/status_bar_theme.dart';
 
 // Third Screen with Voice Control Design
 class OnboardPage extends StatefulWidget {
@@ -22,6 +23,9 @@ class _OnboardPageState extends State<OnboardPage>
   late AnimationController _waveController;
   late Animation<double> _pulseAnimation;
   late Animation<double> _waveAnimation;
+
+  bool isProgress = false;
+
   final FirebaseAuth auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn(
     clientId:
@@ -31,6 +35,8 @@ class _OnboardPageState extends State<OnboardPage>
   @override
   void initState() {
     super.initState();
+
+    statusBarTheme();
 
     _pulseController = AnimationController(
       duration: Duration(seconds: 2),
@@ -52,18 +58,18 @@ class _OnboardPageState extends State<OnboardPage>
     ).animate(_waveController);
   }
 
-  @override
-  void dispose() {
-    _pulseController.dispose();
-    _waveController.dispose();
-    super.dispose();
-  }
-
   void signinORsignup() async {
     try {
+      setState(() {
+        isProgress = true;
+      });
+
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         // User cancelled the sign-in
+        setState(() {
+          isProgress = false;
+        });
         return;
       }
 
@@ -78,20 +84,32 @@ class _OnboardPageState extends State<OnboardPage>
 
       if (user.user != null) {
         // Successfully signed in
-        print("User signed in: ${user.user!.displayName}");
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
           CupertinoPageRoute(builder: (context) => HomePage()),
+          (route) => false,
         );
+
+        setState(() {
+          isProgress = false;
+        });
       } else {
         // Sign-in failed
         print("Sign-in failed");
+        setState(() {
+          isProgress = false;
+        });
       }
     } catch (e) {
       // Handle sign-in or sign-up errors
-      print("Error during sign-in/sign-up: $e");
+      final erros = e.toString();
+      print("Error during sign-in/sign-up: $erros");
+
+      setState(() {
+        isProgress = true;
+      });
       // ignore: use_build_context_synchronously
-      scafoldMessage("Failed to sign in or sign up.${e.toString()}", context);
+      scafoldMessage("Failed to sign in or sign up.", context);
     }
   }
 
@@ -296,14 +314,16 @@ class _OnboardPageState extends State<OnboardPage>
                     ],
                   ),
                   child: Center(
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    child: isProgress
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            "Sign Up",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -327,14 +347,16 @@ class _OnboardPageState extends State<OnboardPage>
                     ),
                   ),
                   child: Center(
-                    child: Text(
-                      "Sign In",
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    child: isProgress
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            "Sign In",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -345,6 +367,13 @@ class _OnboardPageState extends State<OnboardPage>
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _waveController.dispose();
+    super.dispose();
   }
 }
 

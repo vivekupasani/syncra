@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "55757197450-hc3fcj9iv47s1ed84o4errqg9gnjsn8r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vivekupasani.syncra",
+            "certificate_hash": "46370f78898bf9af57b55a28c81b4e891d1c8964"
+          }
+        },
+        {
           "client_id": "55757197450-888nlj45slscolv1aloukmk7f3a6p92p.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "55757197450-888nlj45slscolv1aloukmk7f3a6p92p.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "55757197450-16cjhej2j510fnf3jqo6en66a3m0q6is.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vivekupasani.syncra"
+              }
             }
           ]
         }
