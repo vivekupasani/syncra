@@ -1,8 +1,7 @@
 const { GoogleGenAI, Modality } = require("@google/genai");
-const axios = require("axios");
-const FormData = require("form-data");
-
 let tokens = 10;
+
+const api_key = process.env.API_KEY;
 
 exports.getTokens = (req, res) => {
   const { tokensCount } = req.body;
@@ -31,7 +30,7 @@ exports.textInput = async (req, res) => {
 
   try {
     const ai = new GoogleGenAI({
-      apiKey: "AIzaSyCY55Lx8w5nTjYWXjNcu212IrheeLp-P0c",
+      apiKey: api_key,
     });
 
     const response = await ai.models.generateContent({
@@ -71,7 +70,7 @@ exports.imageInput = async (req, res) => {
 
   try {
     const ai = new GoogleGenAI({
-      apiKey: "AIzaSyCY55Lx8w5nTjYWXjNcu212IrheeLp-P0c",
+      apiKey: api_key,
     });
 
     const response = await ai.models.generateContent({
@@ -102,7 +101,7 @@ exports.imageInput = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      content: imageBase64, 
+      content: imageBase64,
       tokensRemaining: tokens,
       contentType: "image",
     });

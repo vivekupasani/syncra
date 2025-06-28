@@ -11,6 +11,7 @@ import 'package:syncra/models/content.dart';
 import 'dart:math' as math;
 
 import 'package:syncra/painters/voice_wave_pointer.dart';
+import 'package:syncra/utils/download_file.dart';
 import 'package:syncra/utils/status_bar_theme.dart';
 import 'package:syncra/utils/syncra_conversations.dart';
 
@@ -60,6 +61,11 @@ class _AssistantPageState extends State<AssistantPage>
         );
       }
     });
+  }
+
+  void downloadPhoto() async {
+    print('clicked');
+    await downloadFile(fileName: res.contentType, url: imageBytes);
   }
 
   void _initAnimations() {
@@ -503,15 +509,17 @@ class _AssistantPageState extends State<AssistantPage>
                             SizedBox(height: 8),
                             res.contentType == 'image'
                                 //display image
-                                ? ClipRRect(
-                                    borderRadius: BorderRadiusGeometry.circular(
-                                      10,
-                                    ),
-                                    child: Image.memory(
-                                      imageBytes,
-                                      height: 300,
-                                      width: 300,
-                                      fit: BoxFit.cover,
+                                ? GestureDetector(
+                                    onTap: downloadPhoto,
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadiusGeometry.circular(10),
+                                      child: Image.memory(
+                                        imageBytes,
+                                        height: 300,
+                                        width: 300,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   )
                                 //display text

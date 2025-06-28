@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const aiController = require("./aiController");
+const aiController = require("../controller/aiController");
 
 router.post("/get-tokens", aiController.getTokens);
 router.post("/text", aiController.textInput);

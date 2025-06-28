@@ -41,12 +41,12 @@ Future<Content> imageBasedConversation(String userInput) async {
   final body = jsonEncode({'userInput': userInput});
 
   final res = await http.post(url, headers: headers, body: body);
-
   if (res.statusCode == 200) {
     final decodeRes = jsonDecode(res.body) as Map<String, dynamic>;
 
     if (decodeRes['status'] == 'success') {
       //Returning the message from the response
+
       return Content.fromJson(decodeRes);
     } else {
       //Throwing an exception if the status is not success
